@@ -58,3 +58,11 @@ model SiteSettings {
   whatsappNumber   String   @default("")
   updatedAt        DateTime @updatedAt
 }
+
+model AdminCredential {
+  id           String   @id @default("default")
+  email        String   @unique
+  passwordSalt String
+  passwordHash String
+  updatedAt    DateTime @updatedAt
+}

@@ -20,7 +20,7 @@ if (!process.env.DATABASE_URL) {
 console.log('[db-prepare] Aplicando esquema Prisma a Postgres…')
 const result = spawnSync(
   'npx',
-  ['prisma', 'db', 'push', '--skip-generate'],
+  ['prisma', 'db', 'push'],
   { stdio: 'inherit', env: process.env },
 )
 process.exit(result.status ?? 1)

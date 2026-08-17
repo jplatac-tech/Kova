@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!verifyAdminPassword(email, password)) {
+    if (!(await verifyAdminPassword(email, password))) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
     }
 

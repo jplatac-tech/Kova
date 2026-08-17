@@ -10,6 +10,26 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [uploadingHero, setUploadingHero] = useState(false)
+
+  async function uploadHero(file: File) {
+    setUploadingHero(true)
+    setError(null)
+    try {
+      const data = new FormData()
+      data.append('file', file)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: data })
+      const json = (await res.json()) as { url?: string; error?: string }
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? 'No se pudo subir la imagen')
+      }
+      setForm((current) => ({ ...current, heroImage: json.url! }))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al subir imagen')
+    } finally {
+      setUploadingHero(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -57,7 +77,6 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
           ['heroEyebrow', 'Texto pequeño del hero'],
           ['heroTitle', 'Título principal'],
           ['heroSubtitle', 'Subtítulo'],
-          ['heroImage', 'URL de la imagen del hero'],
           ['catalogTitle', 'Título del catálogo'],
           ['catalogSubtitle', 'Subtítulo del catálogo'],
           ['footerText', 'Texto del pie (opcional)'],
@@ -81,6 +100,42 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
           )}
         </label>
       ))}
+
+      <label className="block text-sm font-medium">
+        URL de la imagen del hero
+        <Input
+          className="mt-2"
+          value={form.heroImage}
+          onChange={(e) => setForm({ ...form, heroImage: e.target.value })}
+          placeholder="https://..."
+        />
+      </label>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <label className="btn btn-secondary cursor-pointer">
+          {uploadingHero ? 'Subiendo…' : 'Subir imagen del hero'}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            disabled={uploadingHero}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) void uploadHero(file)
+              e.target.value = ''
+            }}
+          />
+        </label>
+        <span className="text-xs text-neutral-500">
+          Si subes archivo, reemplazamos automáticamente la URL.
+        </span>
+      </div>
+
+      {form.heroImage ? (
+        <div className="max-w-md overflow-hidden rounded-2xl border border-[var(--border)] bg-white">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={form.heroImage} alt="Vista previa del hero" className="h-40 w-full object-cover" />
+        </div>
+      ) : null}
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {saved ? <p className="text-sm text-green-700">Guardado.</p> : null}
       <Button type="submit" disabled={pending} className="bg-neutral-950 text-white">

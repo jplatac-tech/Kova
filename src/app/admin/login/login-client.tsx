@@ -47,11 +47,12 @@ export function AdminLoginClient({ nextPath }: { nextPath: string }) {
           Acceso administrador
         </h1>
         <p className="mt-2 text-sm text-neutral-600">
-          Un solo administrador. En producción usa el correo y la
-          contraseña configurados en las variables{' '}
+          Un solo administrador. En producción usa el correo y la contraseña
+          configurados en las variables{' '}
           <code className="rounded bg-neutral-100 px-1 text-xs">ADMIN_EMAIL</code>{' '}
           y{' '}
-          <code className="rounded bg-neutral-100 px-1 text-xs">ADMIN_PASSWORD</code>.
+          <code className="rounded bg-neutral-100 px-1 text-xs">ADMIN_PASSWORD</code>,
+          o cámbialos luego en Admin → Seguridad.
         </p>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <label className="block text-sm font-medium text-neutral-900">

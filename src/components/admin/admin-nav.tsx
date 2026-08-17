@@ -8,6 +8,7 @@ const LINKS = [
   { href: '/admin/products', label: 'Productos' },
   { href: '/admin/brands', label: 'Marcas' },
   { href: '/admin/settings', label: 'Página' },
+  { href: '/admin/security', label: 'Seguridad' },
 ] as const
 
 export function AdminNav() {

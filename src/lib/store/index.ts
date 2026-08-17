@@ -56,10 +56,15 @@ async function withStoreFallback<T>(
     return await prismaFn()
   } catch (error) {
     if (isDbUnreachable(error)) {
-      console.warn(
-        '[kova] Supabase no alcanzable desde esta red. Usando data/kova-store.json.',
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          '[kova] Supabase no alcanzable desde esta red. Usando data/kova-store.json.',
+        )
+        return jsonFn()
+      }
+      throw new Error(
+        'No se pudo conectar con la base de datos de Supabase en producción. Revisa las variables DATABASE_URL/POSTGRES_* en Vercel.',
       )
-      return jsonFn()
     }
     throw error
   }

@@ -53,6 +53,12 @@ export default async function AdminHomePage() {
         >
           Editar textos de la página
         </Link>
+        <Link
+          href="/admin/security"
+          className="rounded-full border border-neutral-900 px-5 py-2.5 text-sm font-semibold"
+        >
+          Credenciales admin
+        </Link>
       </div>
     </main>
   )
