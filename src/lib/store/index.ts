@@ -37,13 +37,15 @@ export function usesDatabase() {
 function isDbUnreachable(error: unknown) {
   if (!error || typeof error !== 'object') return false
   const err = error as { code?: string; message?: string }
-  if (err.code === 'P1001') return true
+  if (err.code === 'P1001' || err.code === 'P1011') return true
   const msg = String(err.message ?? '').toLowerCase()
   return (
     msg.includes("can't reach database") ||
     msg.includes('databasenotreachable') ||
     msg.includes('econnrefused') ||
-    msg.includes('enotfound')
+    msg.includes('enotfound') ||
+    msg.includes('error opening a tls connection') ||
+    msg.includes('self-signed certificate')
   )
 }
 
@@ -52,13 +54,16 @@ async function withStoreFallback<T>(
   jsonFn: () => Promise<T>,
 ): Promise<T> {
   if (!usesDatabase()) return jsonFn()
+  const allowJsonFallback =
+    process.env.NODE_ENV !== 'production' ||
+    process.env.NEXT_PHASE === 'phase-production-build'
   try {
     return await prismaFn()
   } catch (error) {
     if (isDbUnreachable(error)) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (allowJsonFallback) {
         console.warn(
-          '[kova] Supabase no alcanzable desde esta red. Usando data/kova-store.json.',
+          '[kova] Postgres/Supabase no alcanzable. Usando data/kova-store.json.',
         )
         return jsonFn()
       }
