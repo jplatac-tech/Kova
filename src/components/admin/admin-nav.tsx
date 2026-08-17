@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 const LINKS = [
-  { href: '/admin/quotes', label: 'Pedidos' },
+  { href: '/admin', label: 'Inicio' },
   { href: '/admin/products', label: 'Productos' },
+  { href: '/admin/brands', label: 'Marcas' },
+  { href: '/admin/settings', label: 'Página' },
 ] as const
 
 export function AdminNav() {
@@ -21,14 +23,14 @@ export function AdminNav() {
   }
 
   return (
-    <nav
-      className="border-b border-neutral-200 bg-neutral-50"
-      aria-label="Admin"
-    >
+    <nav className="border-b border-[var(--border)] bg-white" aria-label="Admin">
       <div className="container flex flex-col gap-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {LINKS.map((item) => {
-            const active = pathname.startsWith(item.href)
+            const active =
+              item.href === '/admin'
+                ? pathname === '/admin'
+                : pathname.startsWith(item.href)
             return (
               <Link
                 key={item.href}
@@ -37,7 +39,7 @@ export function AdminNav() {
                   'rounded-full px-4 py-2 text-sm font-semibold transition ' +
                   (active
                     ? 'bg-neutral-900 text-white'
-                    : 'bg-white text-neutral-800 ring-1 ring-neutral-200 hover:bg-neutral-100')
+                    : 'bg-[var(--surface-muted)] text-neutral-800 hover:bg-[var(--sand)]')
                 }
               >
                 {item.label}

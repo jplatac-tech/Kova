@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { isAdminEmail } from '../../../../lib/admin-emails'
+import { verifyAdminPassword } from '../../../../lib/admin-credentials'
 import {
   ADMIN_SESSION_COOKIE,
   adminSessionCookieOptions,
@@ -8,21 +8,24 @@ import {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { email?: string }
+    const body = (await request.json()) as { email?: string; password?: string }
     const email = body.email?.trim()
-    if (!email) {
-      return NextResponse.json({ error: 'Email requerido' }, { status: 400 })
+    const password = body.password ?? ''
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Correo y contraseña requeridos' },
+        { status: 400 },
+      )
     }
 
-    const ok = await isAdminEmail(email)
-    if (!ok) {
+    if (!verifyAdminPassword(email, password)) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
     }
 
     const token = await signAdminSession(email)
     if (!token) {
       return NextResponse.json(
-        { error: 'ADMIN_SESSION_SECRET no configurado en el servidor' },
+        { error: 'ADMIN_SESSION_SECRET no configurado' },
         { status: 500 },
       )
     }

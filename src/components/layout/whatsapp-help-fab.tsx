@@ -1,10 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { buildWhatsAppUrl } from '../../lib/whatsapp'
-import { HELP_WHATSAPP_MESSAGE } from '../../lib/constants'
-import { EDITOR_PATH } from '../../lib/start-editor'
+import { HELP_WHATSAPP_MESSAGE, STORE_WHATSAPP } from '../../lib/constants'
 import { cn } from '../../lib/utils'
 
 export function WhatsAppIcon({ className }: { className?: string }) {
@@ -22,18 +22,25 @@ export function WhatsAppIcon({ className }: { className?: string }) {
 
 export function WhatsAppHelpFab() {
   const pathname = usePathname()
-  const isEditorWorkspace =
-    pathname === EDITOR_PATH || pathname.startsWith(`${EDITOR_PATH}/`)
+  const [phone, setPhone] = useState(STORE_WHATSAPP)
+
+  useEffect(() => {
+    fetch('/api/store/settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.whatsappNumber) setPhone(data.whatsappNumber)
+      })
+      .catch(() => {})
+  }, [])
+
+  if (pathname.startsWith('/admin')) return null
+
+  const href = buildWhatsAppUrl(HELP_WHATSAPP_MESSAGE, phone)
+  const label = '¿Tienes dudas? Escríbenos por WhatsApp'
   const isCompactFab =
     pathname === '/' ||
     pathname === '/catalogo' ||
     pathname.startsWith('/productos/')
-
-  if (pathname.startsWith('/admin')) return null
-  if (isEditorWorkspace) return null
-
-  const href = buildWhatsAppUrl(HELP_WHATSAPP_MESSAGE)
-  const label = '¿Tienes dudas? Escríbenos por WhatsApp'
 
   if (isCompactFab) {
     return (

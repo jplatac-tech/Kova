@@ -3,11 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { CartItem } from '../app-state/app-state-provider'
-import {
-  formatCartPrice,
-  getCartProductBrand,
-  getCartProductImage,
-} from '../../lib/cart-display'
+import { formatCartPrice } from '../../lib/cart-display'
 
 type Props = {
   items: CartItem[]
@@ -17,13 +13,12 @@ type Props = {
 
 function CartLineItem({ item }: { item: CartItem }) {
   const lineTotal = item.price * item.quantity
-  const sizeLabel = item.size ? `Talla: ${item.size}` : null
 
   return (
     <li className="flex gap-3 py-4">
-      <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-md bg-neutral-100">
+      <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-md bg-[var(--surface-muted)]">
         <Image
-          src={getCartProductImage(item.slug)}
+          src={item.image || '/brand/kova-logo.jpg'}
           alt=""
           fill
           className="object-cover object-center"
@@ -34,17 +29,16 @@ function CartLineItem({ item }: { item: CartItem }) {
         <p className="truncate text-sm font-semibold text-neutral-900">
           {item.name}
           {item.quantity > 1 ? (
-            <span className="font-medium text-neutral-500">
-              {' '}
-              × {item.quantity}
-            </span>
+            <span className="font-medium text-neutral-500"> × {item.quantity}</span>
           ) : null}
         </p>
-        <p className="mt-0.5 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">
-          {getCartProductBrand(item.slug)}
-        </p>
-        {sizeLabel ? (
-          <p className="mt-1 text-xs text-neutral-500">{sizeLabel}</p>
+        {item.brand ? (
+          <p className="mt-0.5 text-[11px] font-semibold tracking-wide text-neutral-400 uppercase">
+            {item.brand}
+          </p>
+        ) : null}
+        {item.size ? (
+          <p className="mt-1 text-xs text-neutral-500">Talla: {item.size}</p>
         ) : null}
         <p className="mt-auto pt-2 text-sm font-medium text-neutral-900">
           {formatCartPrice(lineTotal)}
@@ -81,40 +75,31 @@ export function CartDropdown({ items, totalPrice, onClose }: Props) {
         </div>
       ) : (
         <>
-          <ul className="max-h-[min(50vh,320px)] divide-y divide-neutral-100 overflow-y-auto overscroll-contain px-5 [-webkit-overflow-scrolling:touch]">
+          <ul className="max-h-[min(50vh,320px)] divide-y divide-neutral-100 overflow-y-auto overscroll-contain px-5">
             {items.map((item) => (
-              <CartLineItem
-                key={`${item.slug}-${item.size ?? ''}`}
-                item={item}
-              />
+              <CartLineItem key={item.id} item={item} />
             ))}
           </ul>
-
           <div className="border-t border-neutral-200 px-5 py-4">
-            <div className="flex justify-between text-sm text-neutral-700">
-              <span>Envío:</span>
-              <span className="text-neutral-500">Por calcular</span>
-            </div>
-            <div className="mt-2 flex justify-between text-sm font-medium text-neutral-900">
+            <div className="flex justify-between text-sm font-medium text-neutral-900">
               <span>Total:</span>
               <span>{formatCartPrice(totalPrice)}</span>
             </div>
           </div>
-
           <div className="flex gap-2 border-t border-neutral-100 px-4 py-4">
             <Link
               href="/carrito"
               onClick={onClose}
-              className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full border border-neutral-900 bg-white px-3 text-center text-sm font-semibold text-neutral-900 transition hover:bg-neutral-50"
+              className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full border border-neutral-900 bg-white px-3 text-center text-sm font-semibold text-neutral-900 hover:bg-neutral-50"
             >
               Ver carrito
             </Link>
             <Link
               href="/carrito#checkout"
               onClick={onClose}
-              className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full bg-neutral-900 px-3 text-center text-sm font-semibold text-white transition hover:bg-neutral-800"
+              className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full bg-neutral-900 px-3 text-center text-sm font-semibold text-white hover:bg-neutral-800"
             >
-              Ir al checkout
+              Pedir
             </Link>
           </div>
         </>

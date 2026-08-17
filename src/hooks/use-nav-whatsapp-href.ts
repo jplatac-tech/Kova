@@ -4,23 +4,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAppState } from '../components/app-state/app-state-provider'
 import {
-  DESIGN_SAVE_EVENT,
-  DESIGN_STORAGE_KEY,
-  hasDesignElements,
-  loadDesign,
-} from '../lib/design-storage'
-import { PRODUCTS, type ProductSlug } from '../lib/products'
-import {
-  getActiveLineItem,
-  parseEditorSession,
-  parseStoredDesign,
-} from '../lib/design-storage'
-import {
   buildWhatsAppUrl,
   formatCartWhatsAppMessage,
-  formatDesignQuoteMessage,
   formatQuickQuoteMessage,
 } from '../lib/whatsapp'
+import { STORE_WHATSAPP } from '../lib/constants'
 
 export type NavWhatsAppAction = {
   href: string
@@ -32,27 +20,17 @@ export type NavWhatsAppAction = {
 export function useNavWhatsAppHref(): NavWhatsAppAction {
   const pathname = usePathname()
   const { cartItems, totalPrice, profile } = useAppState()
-  const isEditor =
-    pathname === '/disenar' || pathname.startsWith('/disenar/')
-  const isCart = pathname === '/carrito'
-  const needsDesign = isEditor || isCart
-  const [designJson, setDesignJson] = useState<string | null>(null)
+  const isCart = pathname === '/carrito' || pathname.startsWith('/carrito/')
+  const [phone, setPhone] = useState(STORE_WHATSAPP)
 
   useEffect(() => {
-    if (!needsDesign) return
-    const read = () => setDesignJson(loadDesign())
-    read()
-    const onSave = () => read()
-    window.addEventListener(DESIGN_SAVE_EVENT, onSave)
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === DESIGN_STORAGE_KEY) read()
-    }
-    window.addEventListener('storage', onStorage)
-    return () => {
-      window.removeEventListener(DESIGN_SAVE_EVENT, onSave)
-      window.removeEventListener('storage', onStorage)
-    }
-  }, [needsDesign])
+    fetch('/api/store/settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.whatsappNumber) setPhone(data.whatsappNumber)
+      })
+      .catch(() => {})
+  }, [])
 
   return useMemo(() => {
     if (isCart) {
@@ -60,12 +38,8 @@ export function useNavWhatsAppHref(): NavWhatsAppAction {
       return {
         href: enabled
           ? buildWhatsAppUrl(
-              formatCartWhatsAppMessage(
-                cartItems,
-                totalPrice,
-                profile?.name,
-                designJson,
-              ),
+              formatCartWhatsAppMessage(cartItems, totalPrice, profile?.name),
+              phone,
             )
           : '#',
         label: 'Confirmar por WhatsApp',
@@ -74,52 +48,17 @@ export function useNavWhatsAppHref(): NavWhatsAppAction {
       }
     }
 
-    if (isEditor && hasDesignElements(designJson)) {
-      const session = parseEditorSession(designJson)
-      const active = getActiveLineItem(session)
-      const slug = (active?.productSlug ??
-        parseStoredDesign(designJson)?.productSlug) as ProductSlug | undefined
-      const productName =
-        slug && slug in PRODUCTS ? PRODUCTS[slug].name : undefined
-      return {
-        href: buildWhatsAppUrl(
-          formatDesignQuoteMessage(designJson, productName),
-        ),
-        label: 'Cotizar por WhatsApp',
-        shortLabel: 'Cotizar',
-        enabled: true,
-      }
-    }
-
     const productSlug = pathname.match(/^\/productos\/([^/]+)/)?.[1]
-    const product =
-      productSlug && productSlug in PRODUCTS
-        ? PRODUCTS[productSlug as keyof typeof PRODUCTS]
-        : null
-
-    if (product) {
-      return {
-        href: buildWhatsAppUrl(formatQuickQuoteMessage(product.name)),
-        label: 'Cotizar por WhatsApp',
-        shortLabel: 'Cotizar',
-        enabled: true,
-      }
-    }
-
     return {
-      href: buildWhatsAppUrl(formatQuickQuoteMessage()),
-      label: 'Cotizar por WhatsApp',
-      shortLabel: 'Cotizar',
+      href: buildWhatsAppUrl(
+        formatQuickQuoteMessage(
+          productSlug ? decodeURIComponent(productSlug) : undefined,
+        ),
+        phone,
+      ),
+      label: 'Escribir por WhatsApp',
+      shortLabel: 'WhatsApp',
       enabled: true,
     }
-  }, [
-    isCart,
-    needsDesign,
-    isEditor,
-    designJson,
-    cartItems,
-    totalPrice,
-    profile?.name,
-    pathname,
-  ])
+  }, [isCart, cartItems, totalPrice, profile?.name, pathname, phone])
 }

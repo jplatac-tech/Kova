@@ -1,0 +1,148 @@
+{
+  "brands": [
+    { "id": "brand-nike", "name": "Nike", "slug": "nike" },
+    { "id": "brand-adidas", "name": "Adidas", "slug": "adidas" },
+    { "id": "brand-new-balance", "name": "New Balance", "slug": "new-balance" },
+    { "id": "brand-puma", "name": "Puma", "slug": "puma" }
+  ],
+  "products": [
+    {
+      "id": "prod-dunk-low",
+      "slug": "nike-dunk-low",
+      "name": "Nike Dunk Low",
+      "description": "Silueta clásica de skate con cuero premium y suela de goma. Ideal para uso diario.",
+      "price": 589000,
+      "brandId": "brand-nike",
+      "images": [
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "badge": "Nuevo",
+      "featured": true,
+      "isActive": true,
+      "sizes": [
+        { "label": "38", "stock": 4 },
+        { "label": "39", "stock": 6 },
+        { "label": "40", "stock": 8 },
+        { "label": "41", "stock": 5 },
+        { "label": "42", "stock": 3 },
+        { "label": "43", "stock": 2 }
+      ]
+    },
+    {
+      "id": "prod-air-max",
+      "slug": "nike-air-max-90",
+      "name": "Nike Air Max 90",
+      "description": "Amortiguación visible Air y perfil retro. Un básico que nunca pasa de moda.",
+      "price": 649000,
+      "brandId": "brand-nike",
+      "images": [
+        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "badge": "",
+      "featured": false,
+      "isActive": true,
+      "sizes": [
+        { "label": "39", "stock": 3 },
+        { "label": "40", "stock": 5 },
+        { "label": "41", "stock": 4 },
+        { "label": "42", "stock": 4 },
+        { "label": "43", "stock": 1 }
+      ]
+    },
+    {
+      "id": "prod-samba",
+      "slug": "adidas-samba-og",
+      "name": "Adidas Samba OG",
+      "description": "El clásico indoor que se volvió street. Gamuza, tres rayas y suela gum.",
+      "price": 529000,
+      "brandId": "brand-adidas",
+      "images": [
+        "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "badge": "Popular",
+      "featured": true,
+      "isActive": true,
+      "sizes": [
+        { "label": "37", "stock": 2 },
+        { "label": "38", "stock": 5 },
+        { "label": "39", "stock": 7 },
+        { "label": "40", "stock": 6 },
+        { "label": "41", "stock": 4 },
+        { "label": "42", "stock": 3 }
+      ]
+    },
+    {
+      "id": "prod-campus",
+      "slug": "adidas-campus-00s",
+      "name": "Adidas Campus 00s",
+      "description": "Gamuza gruesa, plantilla cómoda y look ochentero actualizado.",
+      "price": 499000,
+      "brandId": "brand-adidas",
+      "images": [
+        "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "featured": false,
+      "isActive": true,
+      "sizes": [
+        { "label": "38", "stock": 3 },
+        { "label": "39", "stock": 4 },
+        { "label": "40", "stock": 5 },
+        { "label": "41", "stock": 5 },
+        { "label": "42", "stock": 2 }
+      ]
+    },
+    {
+      "id": "prod-nb550",
+      "slug": "new-balance-550",
+      "name": "New Balance 550",
+      "description": "Basket retro con cuero y malla. Silueta limpia y muy versátil.",
+      "price": 579000,
+      "brandId": "brand-new-balance",
+      "images": [
+        "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "badge": "Edición",
+      "featured": true,
+      "isActive": true,
+      "sizes": [
+        { "label": "39", "stock": 2 },
+        { "label": "40", "stock": 4 },
+        { "label": "41", "stock": 6 },
+        { "label": "42", "stock": 3 },
+        { "label": "43", "stock": 2 }
+      ]
+    },
+    {
+      "id": "prod-puma-suede",
+      "slug": "puma-suede-classic",
+      "name": "Puma Suede Classic",
+      "description": "Gamuza suave, forma atemporal y plantilla cómoda para el día a día.",
+      "price": 389000,
+      "brandId": "brand-puma",
+      "images": [
+        "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "featured": false,
+      "isActive": true,
+      "sizes": [
+        { "label": "38", "stock": 4 },
+        { "label": "39", "stock": 4 },
+        { "label": "40", "stock": 3 },
+        { "label": "41", "stock": 3 },
+        { "label": "42", "stock": 1 }
+      ]
+    }
+  ],
+  "settings": {
+    "heroEyebrow": "Kova",
+    "heroTitle": "Zapatos que definen tu estilo",
+    "heroSubtitle": "Selección de Nike, Adidas, New Balance y más. Tallas reales, existencias al día y pedidos por WhatsApp.",
+    "heroImage": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1800&q=80",
+    "catalogTitle": "Catálogo",
+    "catalogSubtitle": "Filtra por marca y encuentra tu par.",
+    "footerText": "",
+    "whatsappNumber": "573216678821"
+  }
+}

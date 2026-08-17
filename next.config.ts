@@ -24,7 +24,7 @@ const securityHeaders = [
   {
     key: 'Content-Security-Policy',
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com https://staticimgly.com; worker-src 'self' blob:; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.cloudinary.com https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com https://staticimgly.com; worker-src 'self' blob:; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
   },
 ]
 
@@ -40,6 +40,13 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     qualities: [70, 75, 80],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'plus.unsplash.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: '*.supabase.in' },
+    ],
   },
   headers: async () => [
     {
@@ -77,12 +84,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/products/:slug', destination: '/productos/:slug', permanent: true },
-      { source: '/cotizar', destination: '/disenar', permanent: false },
-      {
-        source: '/cotizar/entrega',
-        destination: '/comprar/entrega',
-        permanent: false,
-      },
+      { source: '/disenar', destination: '/catalogo', permanent: false },
+      { source: '/disenar/:path*', destination: '/catalogo', permanent: false },
+      { source: '/probar-diseno', destination: '/catalogo', permanent: false },
+      { source: '/cotizar', destination: '/catalogo', permanent: false },
+      { source: '/cotizar/entrega', destination: '/carrito', permanent: false },
+      { source: '/comprar', destination: '/carrito', permanent: false },
+      { source: '/comprar/:path*', destination: '/carrito', permanent: false },
     ]
   },
 }

@@ -8,14 +8,16 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { ProductSlug } from '../../lib/products'
 
 export type CartItem = {
-  slug: ProductSlug
+  id: string
+  slug: string
   name: string
   price: number
   quantity: number
-  size?: string
+  size: string
+  image: string
+  brand?: string
 }
 
 export type AccountProfile = {
@@ -29,26 +31,32 @@ type AppStateContextValue = {
   cartItems: CartItem[]
   totalItems: number
   totalPrice: number
-  addToCart: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void
-  updateCartQuantity: (slug: ProductSlug, quantity: number) => void
-  removeFromCart: (slug: ProductSlug) => void
+  addToCart: (item: Omit<CartItem, 'quantity' | 'id'>, quantity?: number) => void
+  updateCartQuantity: (id: string, quantity: number) => void
+  removeFromCart: (id: string) => void
   clearCart: () => void
   profile: AccountProfile
   saveProfile: (profile: AccountProfile) => void
   clearProfile: () => void
 }
 
-const STORAGE_CART_KEY = 'makeityours-cart'
-const STORAGE_PROFILE_KEY = 'makeityours-account'
-const AppStateContext = createContext<AppStateContextValue | undefined>(
-  undefined,
-)
+const STORAGE_CART_KEY = 'kova-cart'
+const STORAGE_PROFILE_KEY = 'kova-account'
+const AppStateContext = createContext<AppStateContextValue | undefined>(undefined)
+
+function cartLineId(slug: string, size: string) {
+  return `${slug}::${size}`
+}
 
 function loadStoredCart(): CartItem[] {
   if (typeof window === 'undefined') return []
   try {
     const raw = window.localStorage.getItem(STORAGE_CART_KEY)
-    return raw ? (JSON.parse(raw) as CartItem[]) : []
+    const parsed = raw ? (JSON.parse(raw) as CartItem[]) : []
+    return parsed.map((item) => ({
+      ...item,
+      id: item.id || cartLineId(item.slug, item.size || ''),
+    }))
   } catch {
     return []
   }
@@ -84,10 +92,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       if (profile) {
-        window.localStorage.setItem(
-          STORAGE_PROFILE_KEY,
-          JSON.stringify(profile),
-        )
+        window.localStorage.setItem(STORAGE_PROFILE_KEY, JSON.stringify(profile))
       } else {
         window.localStorage.removeItem(STORAGE_PROFILE_KEY)
       }
@@ -107,25 +112,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     [cartItems],
   )
 
-  const addToCart = (item: Omit<CartItem, 'quantity'>, quantity = 1) => {
+  const addToCart = (item: Omit<CartItem, 'quantity' | 'id'>, quantity = 1) => {
+    const id = cartLineId(item.slug, item.size)
     setCartItems((previous) => {
-      const exists = previous.find((cartItem) => cartItem.slug === item.slug)
+      const exists = previous.find((cartItem) => cartItem.id === id)
       if (exists) {
         return previous.map((cartItem) =>
-          cartItem.slug === item.slug
+          cartItem.id === id
             ? { ...cartItem, quantity: cartItem.quantity + quantity }
             : cartItem,
         )
       }
-      return [...previous, { ...item, quantity }]
+      return [...previous, { ...item, id, quantity }]
     })
   }
 
-  const updateCartQuantity = (slug: ProductSlug, quantity: number) => {
+  const updateCartQuantity = (id: string, quantity: number) => {
     setCartItems((previous) =>
       previous
         .map((item) =>
-          item.slug === slug
+          item.id === id
             ? { ...item, quantity: Math.max(1, Math.floor(quantity)) }
             : item,
         )
@@ -133,16 +139,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  const removeFromCart = (slug: ProductSlug) => {
-    setCartItems((previous) => previous.filter((item) => item.slug !== slug))
+  const removeFromCart = (id: string) => {
+    setCartItems((previous) => previous.filter((item) => item.id !== id))
   }
 
   const clearCart = () => setCartItems([])
-
-  const saveProfile = (nextProfile: AccountProfile) => {
-    setProfile(nextProfile)
-  }
-
+  const saveProfile = (nextProfile: AccountProfile) => setProfile(nextProfile)
   const clearProfile = () => setProfile(null)
 
   const value = useMemo(
@@ -162,9 +164,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   )
 
   return (
-    <AppStateContext.Provider value={value}>
-      {children}
-    </AppStateContext.Provider>
+    <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
   )
 }
 

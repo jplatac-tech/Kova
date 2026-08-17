@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (pathname === '/admin/login') {
       if (await verifyAdminSession(token)) {
-        return NextResponse.redirect(new URL('/admin/quotes', request.url))
+        return NextResponse.redirect(new URL('/admin', request.url))
       }
       return NextResponse.next()
     }

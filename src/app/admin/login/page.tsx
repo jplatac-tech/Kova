@@ -6,5 +6,5 @@ export default async function AdminLoginPage({
   searchParams: Promise<{ next?: string }>
 }) {
   const { next } = await searchParams
-  return <AdminLoginClient nextPath={next ?? '/admin/quotes'} />
+  return <AdminLoginClient nextPath={next ?? '/admin'} />
 }

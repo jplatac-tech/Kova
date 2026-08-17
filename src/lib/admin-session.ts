@@ -7,7 +7,7 @@ export function getAdminSessionSecret(): string {
   return (
     process.env.ADMIN_SESSION_SECRET?.trim() ||
     process.env.ADMIN_CREATION_SECRET?.trim() ||
-    ''
+    (process.env.NODE_ENV !== 'production' ? 'kova-dev-session-secret' : '')
   )
 }
 

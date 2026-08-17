@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://make-it-yours.example'
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kova.example'
   return {
     rules: {
       userAgent: '*',
