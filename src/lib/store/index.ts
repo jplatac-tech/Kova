@@ -54,6 +54,9 @@ async function withStoreFallback<T>(
   jsonFn: () => Promise<T>,
 ): Promise<T> {
   if (!usesDatabase()) return jsonFn()
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return jsonFn()
+  }
   const allowJsonFallback =
     process.env.NODE_ENV !== 'production' ||
     process.env.NEXT_PHASE === 'phase-production-build'
