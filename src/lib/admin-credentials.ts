@@ -44,13 +44,16 @@ export function isAdminEmail(email: string) {
 function isDbUnreachable(error: unknown) {
   if (!error || typeof error !== 'object') return false
   const err = error as { code?: string; message?: string }
-  if (err.code === 'P1001') return true
+  if (err.code === 'P1001' || err.code === 'P1011' || err.code === 'P2021') return true
   const message = String(err.message ?? '').toLowerCase()
   return (
     message.includes("can't reach database") ||
     message.includes('databasenotreachable') ||
     message.includes('econnrefused') ||
-    message.includes('enotfound')
+    message.includes('enotfound') ||
+    message.includes('error opening a tls connection') ||
+    message.includes('self-signed certificate') ||
+    message.includes('table does not exist')
   )
 }
 

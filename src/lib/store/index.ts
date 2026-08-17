@@ -37,7 +37,7 @@ export function usesDatabase() {
 function isDbUnreachable(error: unknown) {
   if (!error || typeof error !== 'object') return false
   const err = error as { code?: string; message?: string }
-  if (err.code === 'P1001' || err.code === 'P1011') return true
+  if (err.code === 'P1001' || err.code === 'P1011' || err.code === 'P2021') return true
   const msg = String(err.message ?? '').toLowerCase()
   return (
     msg.includes("can't reach database") ||
@@ -45,13 +45,16 @@ function isDbUnreachable(error: unknown) {
     msg.includes('econnrefused') ||
     msg.includes('enotfound') ||
     msg.includes('error opening a tls connection') ||
-    msg.includes('self-signed certificate')
+    msg.includes('self-signed certificate') ||
+    msg.includes('table does not exist') ||
+    msg.includes('relation "') && msg.includes('" does not exist')
   )
 }
 
 async function withStoreFallback<T>(
   prismaFn: () => Promise<T>,
   jsonFn: () => Promise<T>,
+  options?: { allowJsonFallbackInProduction?: boolean },
 ): Promise<T> {
   if (!usesDatabase()) return jsonFn()
   if (process.env.NEXT_PHASE === 'phase-production-build') {
@@ -59,7 +62,8 @@ async function withStoreFallback<T>(
   }
   const allowJsonFallback =
     process.env.NODE_ENV !== 'production' ||
-    process.env.NEXT_PHASE === 'phase-production-build'
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    Boolean(options?.allowJsonFallbackInProduction)
   try {
     return await prismaFn()
   } catch (error) {
@@ -79,7 +83,9 @@ async function withStoreFallback<T>(
 }
 
 export async function listBrands() {
-  return withStoreFallback(prismaListBrands, jsonListBrands)
+  return withStoreFallback(prismaListBrands, jsonListBrands, {
+    allowJsonFallbackInProduction: true,
+  })
 }
 
 export async function createBrand(input: { name: string; slug?: string }) {
@@ -110,6 +116,7 @@ export async function listProducts(opts?: { activeOnly?: boolean }) {
   return withStoreFallback(
     () => prismaListProducts(opts),
     () => jsonListProducts(opts),
+    { allowJsonFallbackInProduction: true },
   )
 }
 
@@ -117,6 +124,7 @@ export async function getProductBySlug(slug: string) {
   return withStoreFallback(
     () => prismaGetProductBySlug(slug),
     () => jsonGetProductBySlug(slug),
+    { allowJsonFallbackInProduction: true },
   )
 }
 
@@ -124,6 +132,7 @@ export async function getProductById(id: string) {
   return withStoreFallback(
     () => prismaGetProductById(id),
     () => jsonGetProductById(id),
+    { allowJsonFallbackInProduction: true },
   )
 }
 
@@ -144,7 +153,9 @@ export async function deleteProduct(id: string) {
 }
 
 export async function getSettings(): Promise<SiteSettings> {
-  return withStoreFallback(prismaGetSettings, jsonGetSettings)
+  return withStoreFallback(prismaGetSettings, jsonGetSettings, {
+    allowJsonFallbackInProduction: true,
+  })
 }
 
 export async function updateSettings(patch: Partial<SiteSettings>) {
