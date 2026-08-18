@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from './button'
-import { cn } from '../../lib/utils'
 
 /** Evita que el mismo gesto que abrió el modal lo cierre o confirme */
 const BACKDROP_GUARD_MS = 400
@@ -115,12 +114,9 @@ export function ConfirmModal({
           </Button>
           <Button
             type="button"
+            variant={tone === 'danger' ? 'danger' : 'primary'}
             onClick={handleConfirm}
             disabled={!interactionsReady}
-            className={cn(
-              tone === 'danger' &&
-                'bg-red-600 hover:bg-red-700 focus-visible:outline-red-600',
-            )}
           >
             {confirmLabel}
           </Button>

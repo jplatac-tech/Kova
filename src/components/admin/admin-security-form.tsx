@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
+import { Input } from '../../../drive-upload-db-fix/src/components/ui/input'
+import { Button } from '../../../drive-upload-db-fix/src/components/ui/button'
+import { AdminAlert, AdminCard, AdminField } from './admin-ui'
 
 export function AdminSecurityForm({ currentEmail }: { currentEmail: string }) {
   const [email, setEmail] = useState(currentEmail)
@@ -41,42 +42,45 @@ export function AdminSecurityForm({ currentEmail }: { currentEmail: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
-      <label className="block text-sm font-medium">
-        Correo administrador
-        <Input
-          className="mt-2"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label className="block text-sm font-medium">
-        Nueva contraseña (opcional)
-        <Input
-          className="mt-2"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mínimo 8 caracteres"
-        />
-      </label>
-      <label className="block text-sm font-medium">
-        Confirmar nueva contraseña
-        <Input
-          className="mt-2"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Repite la contraseña"
-        />
-      </label>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      {saved ? <p className="text-sm text-green-700">Credenciales actualizadas.</p> : null}
-      <Button type="submit" disabled={pending} className="bg-neutral-950 text-white">
-        {pending ? 'Guardando…' : 'Guardar credenciales'}
-      </Button>
+    <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-4">
+      <AdminCard
+        title="Acceso administrador"
+        description="Déjala en blanco la contraseña si solo quieres cambiar el correo."
+      >
+        <div className="space-y-4">
+          <AdminField label="Correo administrador">
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </AdminField>
+          <AdminField label="Nueva contraseña" hint="Mínimo 8 caracteres. Opcional.">
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </AdminField>
+          <AdminField label="Confirmar nueva contraseña">
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Repite la contraseña"
+            />
+          </AdminField>
+        </div>
+      </AdminCard>
+      {error ? <AdminAlert tone="error">{error}</AdminAlert> : null}
+      {saved ? <AdminAlert tone="success">Credenciales actualizadas.</AdminAlert> : null}
+      <div className="admin-sticky-actions">
+        <Button type="submit" disabled={pending} className="admin-btn--block">
+          {pending ? 'Guardando…' : 'Guardar credenciales'}
+        </Button>
+      </div>
     </form>
   )
 }

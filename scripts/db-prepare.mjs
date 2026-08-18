@@ -15,9 +15,7 @@ function sanitizeDatabaseUrl(raw) {
     ]) {
       url.searchParams.delete(key)
     }
-    if (!url.searchParams.has('sslmode')) {
-      url.searchParams.set('sslmode', 'require')
-    }
+    url.searchParams.set('sslmode', 'no-verify')
     return url.toString()
   } catch {
     return String(raw).trim()

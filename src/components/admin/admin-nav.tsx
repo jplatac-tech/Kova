@@ -1,7 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { LOGO_SRC } from '../../lib/constants'
 
 const LINKS = [
   { href: '/admin', label: 'Inicio' },
@@ -24,9 +26,35 @@ export function AdminNav() {
   }
 
   return (
-    <nav className="border-b border-[var(--border)] bg-white" aria-label="Admin">
-      <div className="container flex flex-col gap-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2">
+    <nav className="admin-nav" aria-label="Admin">
+      <div className="container">
+        <div className="admin-nav__top">
+          <Link href="/admin" className="flex min-w-0 items-center gap-2.5">
+            <Image
+              src={LOGO_SRC}
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-full object-cover ring-1 ring-[var(--border)]"
+            />
+            <span className="truncate text-sm font-semibold tracking-tight">
+              Kova <span className="font-medium text-neutral-500">Admin</span>
+            </span>
+          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link href="/" className="admin-btn admin-btn--ghost min-h-9 px-3 py-1.5 text-xs">
+              Tienda
+            </Link>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              className="admin-btn admin-btn--ghost min-h-9 px-3 py-1.5 text-xs"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
+        <div className="admin-nav__tabs">
           {LINKS.map((item) => {
             const active =
               item.href === '/admin'
@@ -36,29 +64,12 @@ export function AdminNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={
-                  'rounded-full px-4 py-2 text-sm font-semibold transition ' +
-                  (active
-                    ? 'bg-neutral-900 text-white'
-                    : 'bg-[var(--surface-muted)] text-neutral-800 hover:bg-[var(--sand)]')
-                }
+                className={'admin-nav__tab' + (active ? ' is-active' : '')}
               >
                 {item.label}
               </Link>
             )
           })}
-        </div>
-        <div className="flex items-center gap-3 text-sm">
-          <Link href="/" className="font-medium text-neutral-600 hover:underline">
-            Tienda
-          </Link>
-          <button
-            type="button"
-            onClick={() => void logout()}
-            className="font-medium text-neutral-600 hover:underline"
-          >
-            Salir
-          </button>
         </div>
       </div>
     </nav>

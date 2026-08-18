@@ -1,18 +1,17 @@
 import { AdminSecurityForm } from '../../../components/admin/admin-security-form'
+import { AdminHeader, AdminPage } from '../../../components/admin/admin-ui'
 import { getConfiguredAdminEmail } from '../../../lib/admin-credentials'
 
 export default async function AdminSecurityPage() {
   const email = await getConfiguredAdminEmail()
 
   return (
-    <main className="container py-10">
-      <h1 className="text-2xl font-semibold">Seguridad admin</h1>
-      <p className="mt-2 text-sm text-neutral-600">
-        Cambia el correo y contraseña del acceso administrador.
-      </p>
-      <div className="mt-8">
-        <AdminSecurityForm currentEmail={email} />
-      </div>
-    </main>
+    <AdminPage>
+      <AdminHeader
+        title="Seguridad"
+        description="Cambia el correo y la contraseña del acceso administrador."
+      />
+      <AdminSecurityForm currentEmail={email} />
+    </AdminPage>
   )
 }

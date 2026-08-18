@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
+import { Input } from '../../../drive-upload-db-fix/src/components/ui/input'
+import { Button } from '../../../drive-upload-db-fix/src/components/ui/button'
 import type { Brand, CatalogProduct, ProductSize } from '../../lib/store/types'
 import { DEFAULT_SHOE_SIZES } from '../../lib/store/types'
+import { AdminAlert, AdminCard, AdminField } from './admin-ui'
 
 type FormState = {
   id?: string
@@ -67,6 +68,7 @@ export function AdminProductForm({
   const [imageUrl, setImageUrl] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (product) return
@@ -77,12 +79,20 @@ export function AdminProductForm({
   }, [brands, product])
 
   async function uploadFile(file: File) {
-    const data = new FormData()
-    data.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: data })
-    const json = (await res.json()) as { url?: string; error?: string }
-    if (!res.ok || !json.url) throw new Error(json.error ?? 'No se pudo subir')
-    setForm((current) => ({ ...current, images: [...current.images, json.url!] }))
+    setUploading(true)
+    setError(null)
+    try {
+      const data = new FormData()
+      data.append('file', file)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: data })
+      const json = (await res.json()) as { url?: string; error?: string }
+      if (!res.ok || !json.url) throw new Error(json.error ?? 'No se pudo subir')
+      setForm((current) => ({ ...current, images: [...current.images, json.url!] }))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo subir')
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -107,113 +117,110 @@ export function AdminProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm font-medium">
-          Nombre
-          <Input
-            className="mt-2"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
-        </label>
-        <label className="text-sm font-medium">
-          URL (slug)
-          <Input
-            className="mt-2"
-            value={form.slug}
-            onChange={(e) => setForm({ ...form, slug: e.target.value })}
-            placeholder="se genera del nombre si lo dejas vacío"
-          />
-        </label>
-        <label className="text-sm font-medium md:col-span-2">
-          Descripción
-          <textarea
-            className="mt-2 w-full rounded-2xl border border-neutral-300 bg-white px-4 py-3 text-sm"
-            rows={3}
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-        </label>
-        <label className="text-sm font-medium">
-          Precio (COP)
-          <Input
-            className="mt-2"
-            type="number"
-            min={0}
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-            required
-          />
-        </label>
-        <label className="text-sm font-medium">
-          Marca
-          <select
-            className="mt-2 w-full rounded-2xl border border-neutral-300 bg-white px-4 py-3 text-sm"
-            value={form.brandId}
-            onChange={(e) => setForm({ ...form, brandId: e.target.value })}
-            required
-          >
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm font-medium">
-          Etiqueta (opcional)
-          <Input
-            className="mt-2"
-            value={form.badge}
-            onChange={(e) => setForm({ ...form, badge: e.target.value })}
-            placeholder="Nuevo, Popular…"
-          />
-        </label>
-        <div className="flex items-center gap-6 pt-6 text-sm">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <AdminCard title="Datos del producto" description="Lo que ve el cliente en el catálogo.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <AdminField label="Nombre">
+            <Input
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
             />
-            Destacado en inicio
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={form.isActive}
-              onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+          </AdminField>
+          <AdminField label="URL (slug)" hint="Si lo dejas vacío, se genera del nombre.">
+            <Input
+              value={form.slug}
+              onChange={(e) => setForm({ ...form, slug: e.target.value })}
+              placeholder="air-force-1"
             />
-            Visible en catálogo
-          </label>
+          </AdminField>
+          <AdminField label="Descripción" className="md:col-span-2">
+            <textarea
+              className="admin-textarea"
+              rows={3}
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </AdminField>
+          <AdminField label="Precio (COP)">
+            <Input
+              type="number"
+              min={0}
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+              required
+            />
+          </AdminField>
+          <AdminField label="Marca">
+            <select
+              className="admin-select"
+              value={form.brandId}
+              onChange={(e) => setForm({ ...form, brandId: e.target.value })}
+              required
+            >
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </AdminField>
+          <AdminField label="Etiqueta" hint="Opcional. Ej. Nuevo, Popular.">
+            <Input
+              value={form.badge}
+              onChange={(e) => setForm({ ...form, badge: e.target.value })}
+              placeholder="Nuevo"
+            />
+          </AdminField>
+          <div className="flex flex-col gap-3 pt-1 text-sm sm:flex-row sm:items-center sm:gap-8">
+            <label className="flex items-center gap-2.5 font-medium">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-neutral-300"
+                checked={form.featured}
+                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              />
+              Destacado en inicio
+            </label>
+            <label className="flex items-center gap-2.5 font-medium">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-neutral-300"
+                checked={form.isActive}
+                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+              />
+              Visible en catálogo
+            </label>
+          </div>
         </div>
-      </div>
+      </AdminCard>
 
-      <section>
-        <h2 className="text-sm font-semibold">Imágenes</h2>
-        <div className="mt-3 flex flex-wrap gap-3">
+      <AdminCard title="Imágenes" description="Sube archivos o pega una URL.">
+        <div className="flex flex-wrap gap-3">
           {form.images.map((src) => (
-            <div key={src} className="relative h-24 w-24 overflow-hidden rounded-xl border">
+            <div
+              key={src}
+              className="relative h-24 w-24 overflow-hidden rounded-2xl border border-[var(--border)]"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt="" className="h-full w-full object-cover" />
               <button
                 type="button"
-                className="absolute top-1 right-1 rounded-full bg-black/70 px-1.5 text-xs text-white"
+                className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/75 text-sm text-white"
                 onClick={() =>
                   setForm({
                     ...form,
                     images: form.images.filter((image) => image !== src),
                   })
                 }
+                aria-label="Quitar imagen"
               >
                 ×
               </button>
             </div>
           ))}
         </div>
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <Input
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
@@ -230,12 +237,13 @@ export function AdminProductForm({
           >
             Añadir URL
           </Button>
-          <label className="btn btn-secondary cursor-pointer">
-            Subir archivo
+          <label className="admin-btn admin-btn--secondary cursor-pointer">
+            {uploading ? 'Subiendo…' : 'Subir archivo'}
             <input
               type="file"
               accept="image/*"
               className="hidden"
+              disabled={uploading}
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) void uploadFile(file)
@@ -244,14 +252,15 @@ export function AdminProductForm({
             />
           </label>
         </div>
-      </section>
+      </AdminCard>
 
-      <section>
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Tallas y existencias</h2>
+      <AdminCard title="Tallas y existencias">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="admin-hint m-0">Talla a la izquierda, unidades a la derecha.</p>
           <Button
             type="button"
             variant="ghost"
+            className="min-h-9 px-3 py-1.5 text-xs"
             onClick={() =>
               setForm({
                 ...form,
@@ -262,9 +271,12 @@ export function AdminProductForm({
             Añadir talla
           </Button>
         </div>
-        <div className="mt-3 space-y-2">
+        <div className="space-y-2">
           {form.sizes.map((size, index) => (
-            <div key={`${size.label}-${index}`} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+            <div
+              key={`${size.label}-${index}`}
+              className="grid grid-cols-[1fr_1fr_auto] items-center gap-2"
+            >
               <Input
                 value={size.label}
                 onChange={(e) => {
@@ -272,7 +284,8 @@ export function AdminProductForm({
                   sizes[index] = { ...sizes[index], label: e.target.value }
                   setForm({ ...form, sizes })
                 }}
-                placeholder="40"
+                placeholder="Talla"
+                aria-label="Talla"
               />
               <Input
                 type="number"
@@ -286,10 +299,13 @@ export function AdminProductForm({
                   }
                   setForm({ ...form, sizes })
                 }}
+                placeholder="Stock"
+                aria-label="Existencias"
               />
               <Button
                 type="button"
                 variant="ghost"
+                className="min-h-11 px-3"
                 onClick={() =>
                   setForm({
                     ...form,
@@ -302,13 +318,15 @@ export function AdminProductForm({
             </div>
           ))}
         </div>
-      </section>
+      </AdminCard>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <AdminAlert tone="error">{error}</AdminAlert> : null}
 
-      <Button type="submit" disabled={pending} className="bg-neutral-950 text-white">
-        {pending ? 'Guardando…' : 'Guardar producto'}
-      </Button>
+      <div className="admin-sticky-actions">
+        <Button type="submit" disabled={pending} className="admin-btn--block">
+          {pending ? 'Guardando…' : 'Guardar producto'}
+        </Button>
+      </div>
     </form>
   )
 }

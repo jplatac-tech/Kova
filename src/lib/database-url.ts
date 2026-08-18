@@ -19,9 +19,10 @@ export function sanitizeDatabaseUrl(raw: string) {
     for (const key of PRISMA_ONLY_PARAMS) {
       url.searchParams.delete(key)
     }
-    if (!url.searchParams.has('sslmode')) {
-      url.searchParams.set('sslmode', 'require')
-    }
+    // Vercel + Supabase pooler presents a cert chain Node rejects
+    // (`self-signed certificate in certificate chain`). sslmode=require
+    // from the integration overwrites Pool `ssl` options; no-verify does not.
+    url.searchParams.set('sslmode', 'no-verify')
     return url.toString()
   } catch {
     return raw.trim()

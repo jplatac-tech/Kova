@@ -6,6 +6,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 import { getDatabaseUrl } from '../src/lib/database-url'
 import type { StoreData } from '../src/lib/store/types'
 
@@ -17,10 +18,12 @@ if (!url) {
 }
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: url,
-    ssl: { rejectUnauthorized: false },
-  }),
+  adapter: new PrismaPg(
+    new Pool({
+      connectionString: url,
+      ssl: { rejectUnauthorized: false },
+    }),
+  ),
 })
 
 async function main() {

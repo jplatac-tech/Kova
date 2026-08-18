@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Input } from '../../../components/ui/input'
 import { Button } from '../../../components/ui/button'
+import { AdminAlert, AdminField } from '../../../components/admin/admin-ui'
 
 export function AdminLoginClient({ nextPath }: { nextPath: string }) {
   const [email, setEmail] = useState('')
@@ -38,59 +39,45 @@ export function AdminLoginClient({ nextPath }: { nextPath: string }) {
   }
 
   return (
-    <main className="container flex min-h-[60vh] items-center justify-center py-16">
-      <div className="card w-full max-w-md p-8">
-        <p className="text-sm font-medium tracking-[0.2em] text-neutral-500 uppercase">
-          Kova
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-neutral-950">
-          Acceso administrador
-        </h1>
-        <p className="mt-2 text-sm text-neutral-600">
-          Un solo administrador. En producción usa el correo y la contraseña
-          configurados en las variables{' '}
-          <code className="rounded bg-neutral-100 px-1 text-xs">ADMIN_EMAIL</code>{' '}
-          y{' '}
-          <code className="rounded bg-neutral-100 px-1 text-xs">ADMIN_PASSWORD</code>,
-          o cámbialos luego en Admin → Seguridad.
-        </p>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <label className="block text-sm font-medium text-neutral-900">
-            Correo
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              className="mt-2"
-            />
-          </label>
-          <label className="block text-sm font-medium text-neutral-900">
-            Contraseña
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              className="mt-2"
-            />
-          </label>
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-          <Button type="submit" disabled={pending} className="bg-neutral-950 text-white">
-            {pending ? 'Entrando…' : 'Entrar'}
-          </Button>
-        </form>
-        <p className="mt-6 text-center text-sm text-neutral-500">
-          <Link href="/" className="underline">
-            Volver a la tienda
-          </Link>
-        </p>
+    <main className="container flex min-h-[70vh] items-center justify-center py-12">
+      <div className="admin-card admin-rise w-full max-w-md">
+        <div className="admin-card__body p-6 sm:p-8">
+          <p className="admin-eyebrow">Kova</p>
+          <h1 className="admin-title text-[1.5rem]">Acceso administrador</h1>
+          <p className="admin-lead">
+            Un solo administrador. En producción usa el correo y la contraseña
+            configurados, o cámbialos luego en Seguridad.
+          </p>
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <AdminField label="Correo">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </AdminField>
+            <AdminField label="Contraseña">
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </AdminField>
+            {error ? <AdminAlert tone="error">{error}</AdminAlert> : null}
+            <Button type="submit" disabled={pending} className="admin-btn--block">
+              {pending ? 'Entrando…' : 'Entrar'}
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-sm text-neutral-500">
+            <Link href="/" className="font-medium underline-offset-2 hover:underline">
+              Volver a la tienda
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   )
