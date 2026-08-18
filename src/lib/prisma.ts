@@ -1,30 +1,24 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { getDatabaseUrl, hasDatabaseUrl } from './database-url'
+
+export { getDatabaseUrl, hasDatabaseUrl }
 
 const globalForPrisma = globalThis as {
   prisma?: PrismaClient
-}
-
-/** Prefer pooler in app; direct host often fails on IPv6-only networks. */
-export function getDatabaseUrl() {
-  return (
-    process.env.DATABASE_URL?.trim() ||
-    process.env.POSTGRES_PRISMA_URL?.trim() ||
-    process.env.POSTGRES_URL?.trim() ||
-    process.env.POSTGRES_URL_NON_POOLING?.trim() ||
-    ''
-  )
-}
-
-export function hasDatabaseUrl() {
-  return Boolean(getDatabaseUrl())
 }
 
 export function getPrisma(): PrismaClient | null {
   if (!hasDatabaseUrl()) return null
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = new PrismaClient({
-      adapter: new PrismaPg(getDatabaseUrl()),
+      adapter: new PrismaPg({
+        connectionString: getDatabaseUrl(),
+        max: 1,
+        connectionTimeoutMillis: 10_000,
+        idleTimeoutMillis: 10_000,
+        ssl: { rejectUnauthorized: false },
+      }),
       log: ['error', 'warn'],
     })
   }

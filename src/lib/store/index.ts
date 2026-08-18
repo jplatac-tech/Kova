@@ -46,8 +46,12 @@ function isDbUnreachable(error: unknown) {
     msg.includes('enotfound') ||
     msg.includes('error opening a tls connection') ||
     msg.includes('self-signed certificate') ||
+    msg.includes('unsupported startup parameter') ||
+    msg.includes('tenant or user not found') ||
+    msg.includes('timeout expired') ||
+    msg.includes('connection terminated') ||
     msg.includes('table does not exist') ||
-    msg.includes('relation "') && msg.includes('" does not exist')
+    (msg.includes('relation "') && msg.includes('" does not exist'))
   )
 }
 
@@ -67,6 +71,7 @@ async function withStoreFallback<T>(
   try {
     return await prismaFn()
   } catch (error) {
+    console.error('[kova] Postgres error:', error)
     if (isDbUnreachable(error)) {
       if (allowJsonFallback) {
         console.warn(
@@ -74,8 +79,9 @@ async function withStoreFallback<T>(
         )
         return jsonFn()
       }
+      const detail = error instanceof Error ? error.message : String(error)
       throw new Error(
-        'No se pudo conectar con la base de datos de Supabase en producción. Revisa las variables DATABASE_URL/POSTGRES_* en Vercel.',
+        `No se pudo conectar con Postgres/Supabase en producción. ${detail}`,
       )
     }
     throw error

@@ -29,6 +29,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ['@prisma/client', '@prisma/adapter-pg', 'pg'],
   experimental: {
     serverActions: {
       bodySizeLimit: '4mb',

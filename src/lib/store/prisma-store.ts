@@ -124,6 +124,15 @@ export async function prismaSaveProduct(
   input: Partial<Product> & { name: string; brandId: string; price: number },
 ) {
   const prisma = prismaOrThrow()
+  if (!input.brandId) {
+    throw new Error('Elige una marca. Si la lista está vacía, créala en Admin → Marcas.')
+  }
+  const brand = await prisma.brand.findUnique({ where: { id: input.brandId } })
+  if (!brand) {
+    throw new Error(
+      'Esa marca no existe en Postgres. Créala en Admin → Marcas (los datos del JSON local no sirven en Vercel).',
+    )
+  }
   const slug = slugify(input.slug || input.name)
   const data = {
     slug,

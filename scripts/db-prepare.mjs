@@ -1,16 +1,42 @@
 import { spawnSync } from 'node:child_process'
 
-const runtimeUrl =
-  process.env.DATABASE_URL ||
-  process.env.POSTGRES_PRISMA_URL ||
-  process.env.POSTGRES_URL ||
-  process.env.POSTGRES_URL_NON_POOLING
+function sanitizeDatabaseUrl(raw) {
+  if (!raw) return ''
+  const normalized = String(raw).trim().replace(/^postgres:\/\//i, 'postgresql://')
+  try {
+    const url = new URL(normalized)
+    for (const key of [
+      'pgbouncer',
+      'connection_limit',
+      'pool_timeout',
+      'socket_timeout',
+      'connect_timeout',
+      'supa',
+    ]) {
+      url.searchParams.delete(key)
+    }
+    if (!url.searchParams.has('sslmode')) {
+      url.searchParams.set('sslmode', 'require')
+    }
+    return url.toString()
+  } catch {
+    return String(raw).trim()
+  }
+}
 
-const pushUrl =
-  process.env.POSTGRES_URL_NON_POOLING ||
+const runtimeUrl = sanitizeDatabaseUrl(
   process.env.DATABASE_URL ||
-  process.env.POSTGRES_PRISMA_URL ||
-  process.env.POSTGRES_URL
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.POSTGRES_URL_NON_POOLING,
+)
+
+const pushUrl = sanitizeDatabaseUrl(
+  process.env.POSTGRES_URL_NON_POOLING ||
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.POSTGRES_URL,
+)
 
 if (!runtimeUrl) {
   console.log(

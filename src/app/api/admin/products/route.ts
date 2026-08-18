@@ -2,8 +2,13 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { deleteProduct, listProducts, saveProduct } from '../../../../lib/store'
 
 export async function GET() {
-  const products = await listProducts()
-  return NextResponse.json(products)
+  try {
+    const products = await listProducts()
+    return NextResponse.json(products)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'invalid_request'
+    return NextResponse.json({ error: message }, { status: 400 })
+  }
 }
 
 export async function POST(request: NextRequest) {

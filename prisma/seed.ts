@@ -6,13 +6,10 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { getDatabaseUrl } from '../src/lib/database-url'
 import type { StoreData } from '../src/lib/store/types'
 
-const url =
-  process.env.DATABASE_URL?.trim() ||
-  process.env.POSTGRES_PRISMA_URL?.trim() ||
-  process.env.POSTGRES_URL?.trim() ||
-  ''
+const url = getDatabaseUrl()
 
 if (!url) {
   console.error('Falta DATABASE_URL (o POSTGRES_URL).')
@@ -20,7 +17,10 @@ if (!url) {
 }
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg(url),
+  adapter: new PrismaPg({
+    connectionString: url,
+    ssl: { rejectUnauthorized: false },
+  }),
 })
 
 async function main() {
