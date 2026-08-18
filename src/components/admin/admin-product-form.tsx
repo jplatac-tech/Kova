@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Input } from '../../../drive-upload-db-fix/src/components/ui/input'
-import { Button } from '../../../drive-upload-db-fix/src/components/ui/button'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import type { Brand, CatalogProduct, ProductSize } from '../../lib/store/types'
 import { DEFAULT_SHOE_SIZES } from '../../lib/store/types'
 import { AdminAlert, AdminCard, AdminField } from './admin-ui'

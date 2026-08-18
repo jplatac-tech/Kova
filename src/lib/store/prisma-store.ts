@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { slugify } from '../slug'
-import { getPrisma } from '../../../drive-upload-db-fix/src/lib/prisma'
+import { getPrisma } from '../prisma'
 import {
   DEFAULT_SETTINGS,
   type Brand,

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Input } from '../../../drive-upload-db-fix/src/components/ui/input'
-import { Button } from '../../../drive-upload-db-fix/src/components/ui/button'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import type { SiteSettings } from '../../lib/store'
 import { AdminAlert, AdminCard, AdminField } from './admin-ui'
 
