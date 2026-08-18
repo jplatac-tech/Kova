@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { buildWhatsAppUrl } from '../../lib/whatsapp'
+import { buildWhatsAppUrl, formatQuickQuoteMessage } from '../../lib/whatsapp'
 import { HELP_WHATSAPP_MESSAGE, STORE_WHATSAPP } from '../../lib/constants'
 import { cn } from '../../lib/utils'
 
@@ -23,19 +23,23 @@ export function WhatsAppIcon({ className }: { className?: string }) {
 export function WhatsAppHelpFab() {
   const pathname = usePathname()
   const [phone, setPhone] = useState(STORE_WHATSAPP)
+  const [message, setMessage] = useState(HELP_WHATSAPP_MESSAGE)
 
   useEffect(() => {
     fetch('/api/store/settings')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.whatsappNumber) setPhone(data.whatsappNumber)
+        if (typeof data?.whatsappMessage === 'string' && data.whatsappMessage.trim()) {
+          setMessage(data.whatsappMessage)
+        }
       })
       .catch(() => {})
   }, [])
 
   if (pathname.startsWith('/admin')) return null
 
-  const href = buildWhatsAppUrl(HELP_WHATSAPP_MESSAGE, phone)
+  const href = buildWhatsAppUrl(formatQuickQuoteMessage(undefined, message), phone)
   const label = '¿Tienes dudas? Escríbenos por WhatsApp'
   const isCompactFab =
     pathname === '/' ||

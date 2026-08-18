@@ -22,12 +22,16 @@ export function useNavWhatsAppHref(): NavWhatsAppAction {
   const { cartItems, totalPrice, profile } = useAppState()
   const isCart = pathname === '/carrito' || pathname.startsWith('/carrito/')
   const [phone, setPhone] = useState(STORE_WHATSAPP)
+  const [message, setMessage] = useState<string | undefined>()
 
   useEffect(() => {
     fetch('/api/store/settings')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.whatsappNumber) setPhone(data.whatsappNumber)
+        if (typeof data?.whatsappMessage === 'string') {
+          setMessage(data.whatsappMessage)
+        }
       })
       .catch(() => {})
   }, [])
@@ -53,6 +57,7 @@ export function useNavWhatsAppHref(): NavWhatsAppAction {
       href: buildWhatsAppUrl(
         formatQuickQuoteMessage(
           productSlug ? decodeURIComponent(productSlug) : undefined,
+          message,
         ),
         phone,
       ),
@@ -60,5 +65,5 @@ export function useNavWhatsAppHref(): NavWhatsAppAction {
       shortLabel: 'WhatsApp',
       enabled: true,
     }
-  }, [isCart, cartItems, totalPrice, profile?.name, pathname, phone])
+  }, [isCart, cartItems, totalPrice, profile?.name, pathname, phone, message])
 }

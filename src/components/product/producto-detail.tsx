@@ -14,6 +14,7 @@ export function ProductoDetail({ product }: { product: CatalogProduct }) {
   const { addToCart } = useAppState()
   const [quantity, setQuantity] = useState(1)
   const [phone, setPhone] = useState(STORE_WHATSAPP)
+  const [message, setMessage] = useState<string | undefined>()
   const availableSizes = product.sizes.filter((size) => size.stock > 0)
   const [selectedSize, setSelectedSize] = useState(
     availableSizes[0]?.label ?? product.sizes[0]?.label ?? '',
@@ -24,6 +25,9 @@ export function ProductoDetail({ product }: { product: CatalogProduct }) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.whatsappNumber) setPhone(data.whatsappNumber)
+        if (typeof data?.whatsappMessage === 'string') {
+          setMessage(data.whatsappMessage)
+        }
       })
       .catch(() => {})
   }, [])
@@ -35,7 +39,10 @@ export function ProductoDetail({ product }: { product: CatalogProduct }) {
     [product.price, quantity],
   )
   const gallery = product.images.length > 0 ? product.images : ['/brand/kova-logo.jpg']
-  const waHref = buildWhatsAppUrl(formatQuickQuoteMessage(product.name), phone)
+  const waHref = buildWhatsAppUrl(
+    formatQuickQuoteMessage(product.name, message),
+    phone,
+  )
 
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">

@@ -8,9 +8,9 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <div className="admin-shell">
       <AdminNav />
-      {children}
-    </>
+      <div className="admin-shell__main">{children}</div>
+    </div>
   )
 }

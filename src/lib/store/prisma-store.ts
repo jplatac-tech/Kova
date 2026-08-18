@@ -186,6 +186,20 @@ export async function prismaGetSettings(): Promise<SiteSettings> {
     (await prisma.siteSettings.create({
       data: { id: 'default', ...DEFAULT_SETTINGS },
     }))
+  return mapSiteSettings(row)
+}
+
+function mapSiteSettings(row: {
+  heroEyebrow: string
+  heroTitle: string
+  heroSubtitle: string
+  heroImage: string
+  catalogTitle: string
+  catalogSubtitle: string
+  footerText: string
+  whatsappNumber: string
+  whatsappMessage?: string | null
+}): SiteSettings {
   return {
     heroEyebrow: row.heroEyebrow || DEFAULT_SETTINGS.heroEyebrow,
     heroTitle: row.heroTitle || DEFAULT_SETTINGS.heroTitle,
@@ -194,8 +208,9 @@ export async function prismaGetSettings(): Promise<SiteSettings> {
     catalogTitle: row.catalogTitle || DEFAULT_SETTINGS.catalogTitle,
     catalogSubtitle: row.catalogSubtitle || DEFAULT_SETTINGS.catalogSubtitle,
     footerText: row.footerText ?? DEFAULT_SETTINGS.footerText,
-    whatsappNumber:
-      row.whatsappNumber || DEFAULT_SETTINGS.whatsappNumber,
+    whatsappNumber: row.whatsappNumber || DEFAULT_SETTINGS.whatsappNumber,
+    whatsappMessage:
+      row.whatsappMessage?.trim() || DEFAULT_SETTINGS.whatsappMessage,
   }
 }
 
@@ -206,18 +221,12 @@ export async function prismaUpdateSettings(patch: Partial<SiteSettings>) {
   if (typeof data.whatsappNumber === 'string') {
     data.whatsappNumber = data.whatsappNumber.replace(/\D/g, '')
   }
+  if (typeof data.whatsappMessage === 'string') {
+    data.whatsappMessage = data.whatsappMessage.trim()
+  }
   const row = await prisma.siteSettings.update({
     where: { id: 'default' },
     data,
   })
-  return {
-    heroEyebrow: row.heroEyebrow,
-    heroTitle: row.heroTitle,
-    heroSubtitle: row.heroSubtitle,
-    heroImage: row.heroImage,
-    catalogTitle: row.catalogTitle,
-    catalogSubtitle: row.catalogSubtitle,
-    footerText: row.footerText,
-    whatsappNumber: row.whatsappNumber || DEFAULT_SETTINGS.whatsappNumber,
-  }
+  return mapSiteSettings(row)
 }

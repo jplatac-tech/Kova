@@ -33,6 +33,8 @@ export type SiteSettings = {
   footerText: string
   /** Solo dígitos con código de país, ej. 573216678821 */
   whatsappNumber: string
+  /** Mensaje que se abre en WhatsApp. Usa {producto} para el nombre del modelo. */
+  whatsappMessage: string
 }
 
 export type CatalogProduct = Product & {
@@ -58,6 +60,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   footerText: '',
   whatsappNumber:
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || '573216678821',
+  whatsappMessage:
+    '¡Hola! Quiero información sobre un modelo de Kova.',
 }
 
 export const DEFAULT_SHOE_SIZES = [

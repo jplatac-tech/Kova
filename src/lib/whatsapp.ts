@@ -1,5 +1,6 @@
-import { STORE_WHATSAPP } from './constants'
+import { HELP_WHATSAPP_MESSAGE, STORE_WHATSAPP } from './constants'
 import type { CartItem } from '../components/app-state/app-state-provider'
+import { DEFAULT_SETTINGS } from './store/types'
 import { formatPrice } from './utils'
 
 function digitsOnly(phone: string) {
@@ -59,11 +60,26 @@ export function formatCartWhatsAppMessage(
   return lines.join('\n')
 }
 
-export function formatQuickQuoteMessage(productName?: string): string {
-  if (productName) {
-    return `¡Hola! Me interesa este modelo de Kova: ${productName}. ¿Tienen tallas disponibles?`
+export function fillWhatsAppTemplate(template: string, productName?: string) {
+  const fallback = productName?.trim() || 'un modelo'
+  const base = template.trim() || DEFAULT_SETTINGS.whatsappMessage
+  if (base.includes('{producto}')) {
+    return base.replaceAll('{producto}', fallback)
   }
-  return '¡Hola! Quiero información sobre un modelo de Kova.'
+  if (productName?.trim()) {
+    return `${base}\n\nModelo: ${productName.trim()}`
+  }
+  return base
+}
+
+export function formatQuickQuoteMessage(
+  productName?: string,
+  template?: string,
+): string {
+  return fillWhatsAppTemplate(
+    template?.trim() || HELP_WHATSAPP_MESSAGE,
+    productName,
+  )
 }
 
 export function formatDesignQuoteMessage(

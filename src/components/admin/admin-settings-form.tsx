@@ -3,11 +3,16 @@
 import { useState } from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import type { SiteSettings } from '../../lib/store'
+import { DEFAULT_SETTINGS, type SiteSettings } from '../../lib/store'
 import { AdminAlert, AdminCard, AdminField } from './admin-ui'
 
 export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
-  const [form, setForm] = useState(settings)
+  const [form, setForm] = useState({
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    whatsappMessage:
+      settings.whatsappMessage?.trim() || DEFAULT_SETTINGS.whatsappMessage,
+  })
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
@@ -56,31 +61,54 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <AdminCard title="WhatsApp" description="Ahí llegan los mensajes de la tienda.">
-        <AdminField
-          label="Número (con código de país, sin +)"
-          hint="Ejemplo Colombia: 57321…"
-        >
-          <Input
-            value={form.whatsappNumber}
-            onChange={(e) =>
-              setForm({ ...form, whatsappNumber: e.target.value })
-            }
-            placeholder="573216678821"
-            inputMode="tel"
-          />
-        </AdminField>
+      <AdminCard
+        title="WhatsApp"
+        description="Número y texto que se abre cuando un cliente escribe desde la tienda."
+      >
+        <div className="space-y-4">
+          <AdminField
+            label="Número (con código de país, sin +)"
+            hint="Ejemplo Colombia: 57321…"
+          >
+            <Input
+              value={form.whatsappNumber}
+              onChange={(e) =>
+                setForm({ ...form, whatsappNumber: e.target.value })
+              }
+              placeholder="573216678821"
+              inputMode="tel"
+            />
+          </AdminField>
+          <AdminField
+            label="Mensaje que llega a WhatsApp"
+            hint="Usa {producto} si quieres que se inserte el nombre del modelo. Si no lo pones, el modelo se añade al final cuando aplica."
+          >
+            <textarea
+              className="admin-textarea"
+              rows={5}
+              value={form.whatsappMessage}
+              onChange={(e) =>
+                setForm({ ...form, whatsappMessage: e.target.value })
+              }
+              placeholder="¡Hola! Quiero información sobre un modelo de Kova."
+            />
+          </AdminField>
+          {form.whatsappMessage.trim() ? (
+            <p className="rounded-2xl bg-[var(--surface-muted)] px-4 py-3 text-sm whitespace-pre-wrap text-neutral-600">
+              <span className="font-semibold text-neutral-800">Vista previa: </span>
+              {form.whatsappMessage.replaceAll('{producto}', 'Nike Dunk Low')}
+            </p>
+          ) : null}
+        </div>
       </AdminCard>
 
-      <AdminCard title="Hero y catálogo">
+      <AdminCard title="Hero y pie">
         <div className="space-y-4">
           {(
             [
               ['heroEyebrow', 'Texto pequeño del hero'],
               ['heroTitle', 'Título principal'],
               ['heroSubtitle', 'Subtítulo'],
-              ['catalogTitle', 'Título del catálogo'],
-              ['catalogSubtitle', 'Subtítulo del catálogo'],
               ['footerText', 'Texto del pie (opcional)'],
             ] as const
           ).map(([key, label]) => (

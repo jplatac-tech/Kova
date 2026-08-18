@@ -172,6 +172,9 @@ export async function jsonUpdateSettings(patch: Partial<SiteSettings>) {
   if (typeof patch.whatsappNumber === 'string') {
     next.whatsappNumber = patch.whatsappNumber.replace(/\D/g, '')
   }
+  if (typeof patch.whatsappMessage === 'string') {
+    next.whatsappMessage = patch.whatsappMessage.trim()
+  }
   store.settings = next
   await writeStore(store)
   return store.settings

@@ -1,32 +1,32 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { ProductCatalogGrid } from '../../components/catalog/product-catalog-grid'
-import { getSettings, listBrands, listProducts } from '../../lib/store'
+import { listBrands, listProducts } from '../../lib/store'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Catálogo',
-  description: 'Zapatos Kova filtrados por marca: Nike, Adidas, New Balance y más.',
+  description: 'Zapatos Kova: filtra por marca, talla y precio, o busca por nombre.',
 }
 
-export default async function CatalogoPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ marca?: string }>
-}) {
-  const { marca } = await searchParams
-  const [products, brands, settings] = await Promise.all([
+function CatalogFallback() {
+  return (
+    <div className="container py-16 text-center text-sm text-neutral-500">
+      Cargando catálogo…
+    </div>
+  )
+}
+
+export default async function CatalogoPage() {
+  const [products, brands] = await Promise.all([
     listProducts({ activeOnly: true }),
     listBrands(),
-    getSettings(),
   ])
 
   return (
-    <ProductCatalogGrid
-      products={products}
-      brands={brands}
-      initialBrand={marca || 'all'}
-      settings={settings}
-    />
+    <Suspense fallback={<CatalogFallback />}>
+      <ProductCatalogGrid products={products} brands={brands} />
+    </Suspense>
   )
 }
