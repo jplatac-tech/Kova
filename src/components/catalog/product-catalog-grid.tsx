@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import type { Brand, CatalogProduct } from '../../lib/store'
+import type { Brand, CatalogProduct } from '../../lib/store/types'
 import { useInView } from '../../hooks/use-in-view'
 import { MotionStaggerItem } from '../ui/motion-stagger-item'
 import { CatalogLookCard } from './catalog-look-card'

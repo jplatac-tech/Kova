@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '../../components/ui/input'
 import { Button } from '../../components/ui/button'
-import type { Brand } from '../../lib/store'
+import type { Brand } from '../../lib/store/types'
 import { ConfirmModal } from '../../components/ui/confirm-modal'
 import { AdminAlert, AdminCard, AdminEmpty, AdminField } from '../../components/admin/admin-ui'
 

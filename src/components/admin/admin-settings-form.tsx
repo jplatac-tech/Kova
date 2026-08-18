@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { DEFAULT_SETTINGS, type SiteSettings } from '../../lib/store'
+import { DEFAULT_SETTINGS, type SiteSettings } from '../../lib/store/types'
 import { AdminAlert, AdminCard, AdminField } from './admin-ui'
 
 export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {

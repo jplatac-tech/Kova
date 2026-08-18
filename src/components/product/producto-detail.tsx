@@ -6,7 +6,7 @@ import { Input } from '../ui/input'
 import { useAppState } from '../app-state/app-state-provider'
 import { formatPrice } from '../../lib/utils'
 import { ProductImageGallery } from './product-image-gallery'
-import type { CatalogProduct } from '../../lib/store'
+import type { CatalogProduct } from '../../lib/store/types'
 import { buildWhatsAppUrl, formatQuickQuoteMessage } from '../../lib/whatsapp'
 import { STORE_WHATSAPP } from '../../lib/constants'
 

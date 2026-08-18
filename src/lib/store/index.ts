@@ -1,3 +1,4 @@
+import 'server-only'
 import { hasDatabaseUrl } from '../prisma'
 import type { Product, SiteSettings } from './types'
 import {

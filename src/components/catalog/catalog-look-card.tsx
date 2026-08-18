@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatPrice } from '../../lib/utils'
-import type { CatalogProduct } from '../../lib/store'
+import type { CatalogProduct } from '../../lib/store/types'
 import { CatalogGalleryMedia } from './catalog-gallery-media'
 
 type Props = {

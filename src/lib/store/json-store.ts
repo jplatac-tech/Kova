@@ -1,3 +1,4 @@
+import 'server-only'
 import { promises as fs } from 'fs'
 import { join } from 'path'
 import { slugify } from '../slug'

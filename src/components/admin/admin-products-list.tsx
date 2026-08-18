@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '../../lib/utils'
-import type { CatalogProduct } from '../../lib/store'
+import type { CatalogProduct } from '../../lib/store/types'
 import { ConfirmModal } from '../../components/ui/confirm-modal'
 import { AdminEmpty } from './admin-ui'
 
