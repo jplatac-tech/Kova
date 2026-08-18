@@ -26,8 +26,9 @@ export function buildWhatsAppUrl(
   phone = getStoreWhatsAppDigits(),
 ) {
   const digits = getStoreWhatsAppDigits(phone)
-  const encoded = encodeURIComponent(message)
-  return `https://wa.me/${digits}?text=${encoded}`
+  const trimmed = message.trim()
+  if (!trimmed) return `https://wa.me/${digits}`
+  return `https://wa.me/${digits}?text=${encodeURIComponent(trimmed)}`
 }
 
 export function openStoreWhatsApp(message: string, phone?: string) {
@@ -58,6 +59,18 @@ export function formatCartWhatsAppMessage(
     '¿Me confirman disponibilidad y envío?',
   )
   return lines.join('\n')
+}
+
+export function composeEditableCartWhatsAppMessage(
+  items: CartItem[],
+  totalPrice: number,
+  customerNote?: string,
+  customerName?: string,
+): string {
+  const orderBlock = formatCartWhatsAppMessage(items, totalPrice, customerName)
+  const note = customerNote?.trim()
+  if (!note) return orderBlock
+  return `${note}\n\n${orderBlock}`
 }
 
 export function fillWhatsAppTemplate(template: string, productName?: string) {

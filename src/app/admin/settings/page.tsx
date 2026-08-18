@@ -8,7 +8,7 @@ export default async function AdminSettingsPage() {
     <AdminPage>
       <AdminHeader
         title="Textos de la página"
-        description="Cambia el hero, WhatsApp —incluido el mensaje que llega al chat— y el pie."
+        description="Cada bloque indica en qué página y sección se ve el cambio: Inicio, Catálogo, pie y WhatsApp."
       />
       <AdminSettingsForm settings={settings} />
     </AdminPage>

@@ -26,9 +26,13 @@ function parsePriceRange(value: string | null) {
 export function ProductCatalogGrid({
   products,
   brands,
+  title,
+  subtitle,
 }: {
   products: CatalogProduct[]
   brands: Brand[]
+  title?: string
+  subtitle?: string
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -84,7 +88,14 @@ export function ProductCatalogGrid({
 
   return (
     <div ref={ref} className={'bg-[var(--background)] motion-in-view ' + (visible ? 'is-visible' : '')}>
-      <h1 className="sr-only">Catálogo</h1>
+      <div className="container pt-6 pb-2 sm:pt-8">
+        <h1 className="text-xl font-semibold tracking-tight text-neutral-950 sm:text-2xl">
+          {title || 'Catálogo'}
+        </h1>
+        {subtitle ? (
+          <p className="mt-1 text-sm text-neutral-600">{subtitle}</p>
+        ) : null}
+      </div>
       <div className="sticky top-[var(--header-height)] z-30 border-b border-[var(--border)] bg-[color-mix(in_srgb,white_92%,var(--sand))] backdrop-blur-md">
         <div className="container py-3 sm:py-3.5">
           <div

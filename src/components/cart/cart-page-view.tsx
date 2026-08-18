@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAppState, type CartItem } from '../app-state/app-state-provider'
-import { useNavWhatsAppHref } from '../../hooks/use-nav-whatsapp-href'
 import { formatCartPrice } from '../../lib/cart-display'
+import { CartWhatsAppComposer } from './cart-whatsapp-composer'
 
 function ChevronLeft({ className }: { className?: string }) {
   return (
@@ -113,7 +113,6 @@ function CartLineRow({
 export function CartPageView() {
   const { cartItems, totalPrice, removeFromCart, updateCartQuantity } =
     useAppState()
-  const wa = useNavWhatsAppHref()
   const isEmpty = cartItems.length === 0
 
   if (isEmpty) {
@@ -177,15 +176,7 @@ export function CartPageView() {
               <span>{formatCartPrice(totalPrice)}</span>
             </div>
           </div>
-          <a
-            id="checkout"
-            href={wa.enabled ? wa.href : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-neutral-900 text-sm font-semibold text-white hover:bg-neutral-800"
-          >
-            Pedir por WhatsApp
-          </a>
+          <CartWhatsAppComposer />
           <Link
             href="/catalogo"
             className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:underline"

@@ -27,7 +27,7 @@ const LINKS = [
   {
     href: '/admin/settings',
     label: 'Página',
-    hint: 'Textos y WhatsApp',
+    hint: 'Secciones de la tienda',
     icon: PageIcon,
   },
   {

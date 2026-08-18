@@ -1050,6 +1050,7 @@ main:has(.editor-shell-height) {
 
 .admin-card {
   overflow: hidden;
+  scroll-margin-top: 5.5rem;
   border: 1px solid var(--border);
   background: #fff;
   border-radius: 1.25rem;
@@ -1060,6 +1061,43 @@ main:has(.editor-shell-height) {
   padding: 1.15rem 1.15rem 0;
 }
 
+.admin-card__page {
+  display: inline-flex;
+  margin: 0 0 0.45rem;
+  border-radius: 9999px;
+  background: var(--surface-muted);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.admin-jump a {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 9999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: #171717;
+  text-decoration: none;
+}
+
+.admin-jump a:hover {
+  border-color: #0a0a0a;
+}
+
 .admin-card__head h2 {
   margin: 0;
   font-size: 0.9375rem;
@@ -1067,7 +1105,7 @@ main:has(.editor-shell-height) {
   color: #0a0a0a;
 }
 
-.admin-card__head p {
+.admin-card__head p:not(.admin-card__page) {
   margin: 0.3rem 0 0;
   font-size: 0.8125rem;
   line-height: 1.45;

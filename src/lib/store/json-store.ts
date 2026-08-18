@@ -176,6 +176,12 @@ export async function jsonUpdateSettings(patch: Partial<SiteSettings>) {
   if (typeof patch.whatsappMessage === 'string') {
     next.whatsappMessage = patch.whatsappMessage.trim()
   }
+  if (typeof patch.footerWhatsappMessage === 'string') {
+    next.footerWhatsappMessage = patch.footerWhatsappMessage.trim()
+  }
+  if (typeof patch.footerContactLabel === 'string') {
+    next.footerContactLabel = patch.footerContactLabel.trim()
+  }
   store.settings = next
   await writeStore(store)
   return store.settings

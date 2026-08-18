@@ -43,7 +43,7 @@ export default async function AdminHomePage() {
         {
           href: '/admin/settings',
           title: 'Textos y WhatsApp',
-          text: 'Hero, pie y el mensaje que llega al chat.',
+          text: 'Inicio, catálogo, pie y mensajes de WhatsApp.',
         },
         {
           href: '/admin/security',

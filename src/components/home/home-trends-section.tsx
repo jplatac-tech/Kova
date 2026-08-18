@@ -8,22 +8,27 @@ export function HomeTrendsSection({
   products,
   brands,
   total,
+  title,
+  subtitle,
 }: {
   products: CatalogProduct[]
   brands: Brand[]
   total: number
+  title: string
+  subtitle: string
 }) {
   return (
     <MotionSection className="border-b border-[var(--border)] bg-[var(--background)]">
       <div className="container py-10 sm:py-14 md:py-20">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
           <h2 className="text-xl font-semibold tracking-tight text-neutral-950 sm:text-2xl md:text-3xl">
-            Destacados
+            {title}
           </h2>
-          <p className="text-sm leading-relaxed text-neutral-600 md:text-base">
-            Una selección de pares listos para enviar. El catálogo completo se
-            filtra por marca.
-          </p>
+          {subtitle ? (
+            <p className="text-sm leading-relaxed text-neutral-600 md:text-base">
+              {subtitle}
+            </p>
+          ) : null}
           <div className="flex flex-wrap justify-center gap-2">
             {brands.map((brand) => (
               <Link

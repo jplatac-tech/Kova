@@ -195,9 +195,15 @@ function mapSiteSettings(row: {
   heroTitle: string
   heroSubtitle: string
   heroImage: string
+  featuredTitle?: string | null
+  featuredSubtitle?: string | null
   catalogTitle: string
   catalogSubtitle: string
+  footerTagline?: string | null
   footerText: string
+  footerContactLabel?: string | null
+  footerWhatsappMessage?: string | null
+  footerCredit?: string | null
   whatsappNumber: string
   whatsappMessage?: string | null
 }): SiteSettings {
@@ -206,9 +212,17 @@ function mapSiteSettings(row: {
     heroTitle: row.heroTitle || DEFAULT_SETTINGS.heroTitle,
     heroSubtitle: row.heroSubtitle || DEFAULT_SETTINGS.heroSubtitle,
     heroImage: row.heroImage || DEFAULT_SETTINGS.heroImage,
+    featuredTitle: row.featuredTitle || DEFAULT_SETTINGS.featuredTitle,
+    featuredSubtitle:
+      row.featuredSubtitle || DEFAULT_SETTINGS.featuredSubtitle,
     catalogTitle: row.catalogTitle || DEFAULT_SETTINGS.catalogTitle,
     catalogSubtitle: row.catalogSubtitle || DEFAULT_SETTINGS.catalogSubtitle,
+    footerTagline: row.footerTagline ?? DEFAULT_SETTINGS.footerTagline,
     footerText: row.footerText ?? DEFAULT_SETTINGS.footerText,
+    footerContactLabel:
+      row.footerContactLabel?.trim() || DEFAULT_SETTINGS.footerContactLabel,
+    footerWhatsappMessage: row.footerWhatsappMessage ?? '',
+    footerCredit: row.footerCredit ?? DEFAULT_SETTINGS.footerCredit,
     whatsappNumber: row.whatsappNumber || DEFAULT_SETTINGS.whatsappNumber,
     whatsappMessage:
       row.whatsappMessage?.trim() || DEFAULT_SETTINGS.whatsappMessage,
@@ -224,6 +238,12 @@ export async function prismaUpdateSettings(patch: Partial<SiteSettings>) {
   }
   if (typeof data.whatsappMessage === 'string') {
     data.whatsappMessage = data.whatsappMessage.trim()
+  }
+  if (typeof data.footerWhatsappMessage === 'string') {
+    data.footerWhatsappMessage = data.footerWhatsappMessage.trim()
+  }
+  if (typeof data.footerContactLabel === 'string') {
+    data.footerContactLabel = data.footerContactLabel.trim()
   }
   const row = await prisma.siteSettings.update({
     where: { id: 'default' },

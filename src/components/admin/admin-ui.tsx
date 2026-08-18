@@ -39,21 +39,26 @@ export function AdminHeader({
 }
 
 export function AdminCard({
+  id,
+  page,
   title,
   description,
   children,
   className,
 }: {
+  id?: string
+  page?: string
   title?: string
   description?: string
   children: ReactNode
   className?: string
 }) {
   return (
-    <section className={cn('admin-card admin-rise', className)}>
-      {title ? (
+    <section id={id} className={cn('admin-card admin-rise', className)}>
+      {title || page ? (
         <div className="admin-card__head">
-          <h2>{title}</h2>
+          {page ? <p className="admin-card__page">{page}</p> : null}
+          {title ? <h2>{title}</h2> : null}
           {description ? <p>{description}</p> : null}
         </div>
       ) : null}

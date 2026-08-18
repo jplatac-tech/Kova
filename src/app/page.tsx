@@ -27,6 +27,8 @@ export default async function HomePage() {
         products={trending}
         brands={brands}
         total={products.length}
+        title={settings.featuredTitle}
+        subtitle={settings.featuredSubtitle}
       />
     </>
   )

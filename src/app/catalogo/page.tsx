@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ProductCatalogGrid } from '../../components/catalog/product-catalog-grid'
-import { listBrands, listProducts } from '../../lib/store'
+import { getSettings, listBrands, listProducts } from '../../lib/store'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,14 +19,20 @@ function CatalogFallback() {
 }
 
 export default async function CatalogoPage() {
-  const [products, brands] = await Promise.all([
+  const [products, brands, settings] = await Promise.all([
     listProducts({ activeOnly: true }),
     listBrands(),
+    getSettings(),
   ])
 
   return (
     <Suspense fallback={<CatalogFallback />}>
-      <ProductCatalogGrid products={products} brands={brands} />
+      <ProductCatalogGrid
+        products={products}
+        brands={brands}
+        title={settings.catalogTitle}
+        subtitle={settings.catalogSubtitle}
+      />
     </Suspense>
   )
 }
