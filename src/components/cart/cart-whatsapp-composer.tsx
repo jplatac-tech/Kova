@@ -85,45 +85,8 @@ export function CartWhatsAppComposer() {
         >
           Borrar mi texto
         </button>
-      ) : (
-        <div className="rounded-2xl border border-dashed border-neutral-300 bg-white px-4 py-3">
-          <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase">
-            Ejemplo
-          </p>
-          <pre className="mt-2 text-xs leading-relaxed whitespace-pre-wrap text-neutral-700">
-            {CART_WHATSAPP_EXAMPLE_NOTE}
-          </pre>
-          <p className="mt-2 text-xs text-neutral-500">
-            Eso lo escribes tú. Abajo se pegan solos los pares, tallas y el total
-            del carrito.
-          </p>
-          <button
-            type="button"
-            onClick={() => setNote(CART_WHATSAPP_EXAMPLE_NOTE)}
-            className="mt-3 inline-flex min-h-[36px] items-center rounded-full border border-neutral-900 px-3 text-xs font-semibold text-neutral-900 hover:bg-neutral-50"
-          >
-            Usar este ejemplo
-          </button>
-        </div>
-      )}
+      ) : null}
 
-      <div className="rounded-2xl bg-[var(--surface-muted)] px-4 py-3">
-        <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase">
-          Se incluye del carrito
-        </p>
-        <pre className="mt-2 overflow-x-auto text-xs leading-relaxed whitespace-pre-wrap text-neutral-700">
-          {orderSummary}
-        </pre>
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase">
-          {usingExample ? 'Vista previa del ejemplo' : 'Vista previa'}
-        </p>
-        <pre className="mt-2 max-h-48 overflow-auto rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap text-neutral-800">
-          {previewMessage}
-        </pre>
-      </div>
 
       <a
         id="checkout"
