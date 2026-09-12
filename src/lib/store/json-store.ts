@@ -17,6 +17,20 @@ function newId(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+function uniqueProductSlug(
+  products: Product[],
+  baseSlug: string,
+  currentId?: string,
+) {
+  let slug = baseSlug
+  let suffix = 2
+  while (products.some((product) => product.slug === slug && product.id !== currentId)) {
+    slug = `${baseSlug}-${suffix}`
+    suffix += 1
+  }
+  return slug
+}
+
 function withBrand(product: Product, brands: Brand[]): CatalogProduct {
   const brand = brands.find((item) => item.id === product.brandId)
   return {
@@ -120,18 +134,11 @@ export async function jsonSaveProduct(
     throw new Error('Marca no válida')
   }
 
-  const slug = slugify(input.slug || input.name)
   const existing = input.id
     ? store.products.find((item) => item.id === input.id)
     : undefined
-
-  if (
-    store.products.some(
-      (item) => item.slug === slug && item.id !== existing?.id,
-    )
-  ) {
-    throw new Error('Ya existe un producto con esa URL')
-  }
+  const requestedSlug = slugify(input.slug || input.name)
+  const slug = uniqueProductSlug(store.products, requestedSlug, existing?.id)
 
   const product: Product = {
     id: existing?.id ?? newId('prod'),

@@ -16,6 +16,25 @@ function prismaOrThrow() {
   return prisma
 }
 
+async function uniqueProductSlug(
+  prisma: ReturnType<typeof prismaOrThrow>,
+  baseSlug: string,
+  currentId?: string,
+) {
+  let slug = baseSlug
+  let suffix = 2
+  while (
+    await prisma.product.findFirst({
+      where: { slug, ...(currentId ? { id: { not: currentId } } : {}) },
+      select: { id: true },
+    })
+  ) {
+    slug = `${baseSlug}-${suffix}`
+    suffix += 1
+  }
+  return slug
+}
+
 function mapProduct(
   row: {
     id: string
@@ -134,7 +153,7 @@ export async function prismaSaveProduct(
       'Esa marca no existe en Postgres. Créala en Admin → Marcas (los datos del JSON local no sirven en Vercel).',
     )
   }
-  const slug = slugify(input.slug || input.name)
+  const slug = await uniqueProductSlug(prisma, slugify(input.slug || input.name), input.id)
   const data = {
     slug,
     name: input.name.trim(),

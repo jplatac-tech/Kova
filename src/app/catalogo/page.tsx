@@ -20,7 +20,7 @@ function CatalogFallback() {
 
 export default async function CatalogoPage() {
   const [products, brands, settings] = await Promise.all([
-    listProducts({ activeOnly: true }),
+    listProducts(),
     listBrands(),
     getSettings(),
   ])
